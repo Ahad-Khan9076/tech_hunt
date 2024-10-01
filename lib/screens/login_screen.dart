@@ -1,8 +1,68 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import '../routes/app_route.dart';
 
-class LoginScreen extends StatelessWidget {
+class LoginScreen extends StatefulWidget {
+  @override
+  _LoginScreenState createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
+  bool isLoading = false;
+
+  Future<void> loginUser() async {
+    setState(() {
+      isLoading = true;
+    });
+    try {
+      // Authenticate the user
+      UserCredential userCredential = await _auth.signInWithEmailAndPassword(
+        email: emailController.text.trim(),
+        password: passwordController.text.trim(),
+      );
+
+      User? user = userCredential.user;
+
+      if (user != null) {
+        // Fetch the user role from Firestore
+        DocumentSnapshot userDoc =
+        await _firestore.collection('users').doc(user.uid).get();
+
+        if (userDoc.exists) {
+          String role = userDoc['role']; // Assuming role is stored as 'role'
+          navigateBasedOnRole(role);
+        } else {
+          Get.snackbar('Error', 'User data not found!');
+        }
+      }
+    } catch (e) {
+      Get.snackbar('Login Failed', e.toString());
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
+
+  void navigateBasedOnRole(String role) {
+    if (role == 'Buyer') {
+      Get.offNamed(AppRoutes.buyerScreen);
+    } else if (role == 'Seller') {
+      Get.offNamed(AppRoutes.sellerScreen);
+    } else if (role == 'Admin') {
+      Get.offNamed(AppRoutes.adminScreen);
+    } else {
+      Get.snackbar('Error', 'Invalid user role!');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -24,10 +84,14 @@ class LoginScreen extends StatelessWidget {
                 SizedBox(height: 30),
                 Text(
                   'Login',
-                  style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: Colors.white),
+                  style: TextStyle(
+                      fontSize: 32,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white),
                 ),
                 SizedBox(height: 20),
                 TextField(
+                  controller: emailController,
                   decoration: InputDecoration(
                     labelText: 'Email',
                     labelStyle: TextStyle(color: Colors.white),
@@ -41,6 +105,7 @@ class LoginScreen extends StatelessWidget {
                 ),
                 SizedBox(height: 20),
                 TextField(
+                  controller: passwordController,
                   obscureText: true,
                   decoration: InputDecoration(
                     labelText: 'Password',
@@ -54,31 +119,38 @@ class LoginScreen extends StatelessWidget {
                   style: TextStyle(color: Colors.white),
                 ),
                 SizedBox(height: 20),
-                ElevatedButton(
-                  onPressed: () {
-                    Get.toNamed(AppRoutes.homeScreen);
-                  },
+                isLoading
+                    ? CircularProgressIndicator()
+                    : ElevatedButton(
+                  onPressed: loginUser,
                   style: ElevatedButton.styleFrom(
-                    padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+                    padding: EdgeInsets.symmetric(
+                        horizontal: 50, vertical: 15),
                     backgroundColor: Colors.blue.shade300,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
                     ),
                   ),
-                  child: Text('Login', style: TextStyle(fontSize: 18, color: Colors.white)),
+                  child: Text('Login',
+                      style: TextStyle(
+                          fontSize: 18, color: Colors.white)),
                 ),
                 SizedBox(height: 20),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text("Don't have an account? ", style: TextStyle(color: Colors.white, fontSize: 16)),
+                    Text("Don't have an account? ",
+                        style: TextStyle(color: Colors.white, fontSize: 16)),
                     GestureDetector(
                       onTap: () {
                         Get.toNamed(AppRoutes.signupScreen);
                       },
                       child: Text(
                         "Signup",
-                        style: TextStyle(color: Colors.blue.shade200, fontSize: 16, decoration: TextDecoration.underline),
+                        style: TextStyle(
+                            color: Colors.blue.shade200,
+                            fontSize: 16,
+                            decoration: TextDecoration.underline),
                       ),
                     ),
                   ],
@@ -90,7 +162,10 @@ class LoginScreen extends StatelessWidget {
                   },
                   child: Text(
                     "Forgot Password?",
-                    style: TextStyle(color: Colors.blue.shade200, fontSize: 16, decoration: TextDecoration.underline),
+                    style: TextStyle(
+                        color: Colors.blue.shade200,
+                        fontSize: 16,
+                        decoration: TextDecoration.underline),
                   ),
                 ),
               ],

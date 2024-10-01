@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "221653425486",
+    "project_id": "techhunt-978b1",
+    "storage_bucket": "techhunt-978b1.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:221653425486:android:10e14f02b456a3d006921f",
+        "android_client_info": {
+          "package_name": "com.example.tech_hunt"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCdgGjuBPNxJ7v8qGL0mn_rywiognWODDE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

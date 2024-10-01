@@ -3,6 +3,9 @@ import 'package:get/get.dart';
 import '../routes/app_route.dart';
 
 class SignupScreen extends StatelessWidget {
+  final List<String> roles = ['Admin', 'Seller', 'Buyer']; // Available roles
+  String? selectedRole; // Variable to store the selected role
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -46,7 +49,9 @@ class SignupScreen extends StatelessWidget {
                 SizedBox(height: 15),
                 _buildTextField('Postal Code', Icons.local_post_office),
                 SizedBox(height: 15),
-                _buildTextField('Role (e.g., Buyer, Seller)', Icons.work),
+
+                // Role Dropdown
+                _buildRoleDropdown(),
 
                 SizedBox(height: 30),
 
@@ -118,4 +123,46 @@ class SignupScreen extends StatelessWidget {
       style: TextStyle(color: Colors.white),
     );
   }
+
+  // Helper method to build the role dropdown
+  Widget _buildRoleDropdown() {
+    return Container(
+      width: 100, // Set your desired width
+      height: 50, // Set your desired height
+      decoration: BoxDecoration(
+        color: Colors.blue.shade200.withOpacity(0.2), // Background color
+        borderRadius: BorderRadius.circular(10.0), // Rounded corners
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black26,
+            blurRadius: 8.0,
+            spreadRadius: 1.0,
+            offset: Offset(0, 2), // Shadow position
+          ),
+        ],
+      ),
+      child: DropdownButtonFormField<String>(
+        decoration: InputDecoration(
+          labelText: 'Role',
+          labelStyle: TextStyle(color: Colors.black),
+          filled: true,
+          border: InputBorder.none, // Remove default border
+        ),
+        dropdownColor: Colors.blue.shade300, // Dropdown background color
+        value: selectedRole,
+        isExpanded: true, // Ensures dropdown items take full width
+        onChanged: (String? newValue) {
+          selectedRole = newValue; // Update selected role
+        },
+        items: roles.map<DropdownMenuItem<String>>((String role) {
+          return DropdownMenuItem<String>(
+            value: role,
+            child: Text(role, style: TextStyle(color: Colors.black)),
+          );
+        }).toList(),
+      ),
+    );
+  }
+
+
 }

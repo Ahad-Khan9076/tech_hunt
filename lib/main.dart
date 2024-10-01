@@ -1,13 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'screens/splash_screen.dart';
 import 'screens/login_screen.dart';
-import 'screens/home_screen.dart';
 import 'screens/signup_screen.dart';
 import 'screens/forgot_password_screen.dart';
+import 'screens/buyer_screen.dart';
+import 'screens/seller_screen.dart';
+import 'screens/admin_screen.dart';
 import 'routes/app_route.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(); // Initialize Firebase
   runApp(MyApp());
 }
 
@@ -20,9 +25,11 @@ class MyApp extends StatelessWidget {
       getPages: [
         GetPage(name: AppRoutes.splashScreen, page: () => SplashScreen()),
         GetPage(name: AppRoutes.loginScreen, page: () => LoginScreen()),
-        GetPage(name: AppRoutes.homeScreen, page: () => HomeScreen()),
         GetPage(name: AppRoutes.signupScreen, page: () => SignupScreen()),
         GetPage(name: AppRoutes.forgotPasswordScreen, page: () => ForgotPasswordScreen()),
+        GetPage(name: AppRoutes.buyerScreen, page: () => BuyerScreen()),
+        GetPage(name: AppRoutes.sellerScreen, page: () => SellerScreen()),
+        GetPage(name: AppRoutes.adminScreen, page: () => AdminScreen()),
       ],
     );
   }
