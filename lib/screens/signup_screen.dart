@@ -1,10 +1,80 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import '../routes/app_route.dart';
 
-class SignupScreen extends StatelessWidget {
-  final List<String> roles = ['Admin', 'Seller', 'Buyer']; // Available roles
-  String? selectedRole; // Variable to store the selected role
+class SignupScreen extends StatefulWidget {
+  @override
+  _SignupScreenState createState() => _SignupScreenState();
+}
+
+class _SignupScreenState extends State<SignupScreen> {
+  final List<String> roles = ['Admin', 'Seller', 'Buyer'];
+  String? selectedRole;
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController nameController = TextEditingController();
+  final TextEditingController phoneController = TextEditingController();
+  final TextEditingController ageController = TextEditingController();
+  final TextEditingController cityController = TextEditingController();
+  final TextEditingController postalCodeController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
+  bool isLoading = false;
+
+  Future<void> registerUser() async {
+    if (selectedRole == null) {
+      Get.snackbar('Error', 'Please select a role');
+      return;
+    }
+
+    setState(() {
+      isLoading = true;
+    });
+
+    try {
+      // Register user in Firebase Auth
+      UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
+        email: emailController.text.trim(),
+        password: passwordController.text.trim(),
+      );
+
+      User? user = userCredential.user;
+
+      if (user != null) {
+        // Store user data in Firestore
+        await _firestore.collection('users').doc(user.uid).set({
+          'email': emailController.text.trim(),
+          'name': nameController.text.trim(),
+          'phone': phoneController.text.trim(),
+          'age': ageController.text.trim(),
+          'city': cityController.text.trim(),
+          'postalCode': postalCodeController.text.trim(),
+          'role': selectedRole,
+        });
+
+        // Update the state to stop loading indicator
+        setState(() {
+          isLoading = false;
+        });
+
+        // Show success message
+        Get.snackbar('Success', 'User created successfully!');
+
+        // Navigate to login screen after a short delay to show the snackbar
+        Future.delayed(Duration(seconds: 1), () {
+          Get.toNamed(AppRoutes.loginScreen);
+        });
+      }
+    } catch (e) {
+      setState(() {
+        isLoading = false;
+      });
+      Get.snackbar('Registration Failed', e.toString());
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +94,6 @@ class SignupScreen extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                // Title
                 Text(
                   'Create Account',
                   textAlign: TextAlign.center,
@@ -35,31 +104,26 @@ class SignupScreen extends StatelessWidget {
                   ),
                 ),
                 SizedBox(height: 30),
-
-                // Input Fields
-                _buildTextField('Email', Icons.email),
+                _buildTextField('Email', Icons.email, emailController),
                 SizedBox(height: 15),
-                _buildTextField('Name', Icons.person),
+                _buildTextField('Name', Icons.person, nameController),
                 SizedBox(height: 15),
-                _buildTextField('Phone Number', Icons.phone),
+                _buildTextField('Phone Number', Icons.phone, phoneController),
                 SizedBox(height: 15),
-                _buildTextField('Age', Icons.cake),
+                _buildTextField('Age', Icons.cake, ageController),
                 SizedBox(height: 15),
-                _buildTextField('City', Icons.location_city),
+                _buildTextField('City', Icons.location_city, cityController),
                 SizedBox(height: 15),
-                _buildTextField('Postal Code', Icons.local_post_office),
+                _buildTextField('Postal Code', Icons.local_post_office, postalCodeController),
                 SizedBox(height: 15),
-
-                // Role Dropdown
+                _buildTextField('Password', Icons.lock, passwordController, isPassword: true),
+                SizedBox(height: 15),
                 _buildRoleDropdown(),
-
                 SizedBox(height: 30),
-
-                // Sign Up Button
-                ElevatedButton(
-                  onPressed: () {
-                    Get.toNamed(AppRoutes.loginScreen);
-                  },
+                isLoading
+                    ? CircularProgressIndicator()
+                    : ElevatedButton(
+                  onPressed: registerUser,
                   style: ElevatedButton.styleFrom(
                     padding: EdgeInsets.symmetric(vertical: 15),
                     backgroundColor: Colors.blue.shade400,
@@ -75,10 +139,7 @@ class SignupScreen extends StatelessWidget {
                     ),
                   ),
                 ),
-
                 SizedBox(height: 20),
-
-                // Already have an account?
                 Center(
                   child: GestureDetector(
                     onTap: () {
@@ -102,9 +163,10 @@ class SignupScreen extends StatelessWidget {
     );
   }
 
-  // Helper method to build a custom styled text field
-  Widget _buildTextField(String label, IconData icon) {
+  Widget _buildTextField(String label, IconData icon, TextEditingController controller, {bool isPassword = false}) {
     return TextField(
+      controller: controller,
+      obscureText: isPassword,
       decoration: InputDecoration(
         labelText: label,
         labelStyle: TextStyle(color: Colors.white),
@@ -124,35 +186,25 @@ class SignupScreen extends StatelessWidget {
     );
   }
 
-  // Helper method to build the role dropdown
   Widget _buildRoleDropdown() {
     return Container(
-      width: 100, // Set your desired width
-      height: 50, // Set your desired height
       decoration: BoxDecoration(
-        color: Colors.blue.shade200.withOpacity(0.2), // Background color
-        borderRadius: BorderRadius.circular(10.0), // Rounded corners
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black26,
-            blurRadius: 8.0,
-            spreadRadius: 1.0,
-            offset: Offset(0, 2), // Shadow position
-          ),
-        ],
+        color: Colors.blue.shade200.withOpacity(0.2),
+        borderRadius: BorderRadius.circular(10.0),
       ),
       child: DropdownButtonFormField<String>(
         decoration: InputDecoration(
           labelText: 'Role',
           labelStyle: TextStyle(color: Colors.black),
-          filled: true,
-          border: InputBorder.none, // Remove default border
+          border: InputBorder.none,
         ),
-        dropdownColor: Colors.blue.shade300, // Dropdown background color
+        dropdownColor: Colors.blue.shade300,
         value: selectedRole,
-        isExpanded: true, // Ensures dropdown items take full width
+        isExpanded: true,
         onChanged: (String? newValue) {
-          selectedRole = newValue; // Update selected role
+          setState(() {
+            selectedRole = newValue;
+          });
         },
         items: roles.map<DropdownMenuItem<String>>((String role) {
           return DropdownMenuItem<String>(
@@ -163,6 +215,4 @@ class SignupScreen extends StatelessWidget {
       ),
     );
   }
-
-
 }
