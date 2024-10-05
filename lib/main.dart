@@ -8,11 +8,13 @@ import 'screens/forgot_password_screen.dart';
 import 'screens/buyer_screen.dart';
 import 'screens/seller_screen.dart';
 import 'screens/admin_screen.dart';
+import 'screens/phone_input_screen.dart';
+import 'screens/verification_screen.dart';
 import 'routes/app_route.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(); // Initialize Firebase
+  await Firebase.initializeApp();
   runApp(MyApp());
 }
 
@@ -30,6 +32,8 @@ class MyApp extends StatelessWidget {
         GetPage(name: AppRoutes.buyerScreen, page: () => BuyerScreen()),
         GetPage(name: AppRoutes.sellerScreen, page: () => SellerScreen()),
         GetPage(name: AppRoutes.adminScreen, page: () => AdminScreen()),
+        GetPage(name: AppRoutes.phoneInputScreen, page: () => PhoneInputScreen()),
+        GetPage(name: AppRoutes.verificationScreen, page: () => VerificationScreen()),
       ],
     );
   }

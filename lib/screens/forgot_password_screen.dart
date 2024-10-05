@@ -1,19 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class ForgotPasswordScreen extends StatelessWidget {
   final TextEditingController emailController = TextEditingController();
+  final FirebaseAuth _auth = FirebaseAuth.instance; // Initialize Firebase Auth
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // Remove background color from the scaffold
       backgroundColor: Colors.transparent,
       appBar: AppBar(
         leading: IconButton(
           icon: Icon(Icons.arrow_back_ios, color: Colors.white),
           onPressed: () {
-            Get.back(); // Use GetX to navigate back
+            Get.back();
           },
         ),
         title: Text("Forgot Password", style: TextStyle(color: Colors.white)),
@@ -21,7 +22,6 @@ class ForgotPasswordScreen extends StatelessWidget {
         backgroundColor: Colors.blue.shade600,
       ),
       body: Container(
-        // Ensure this container expands to fill the screen
         width: double.infinity,
         height: double.infinity,
         decoration: BoxDecoration(
@@ -38,7 +38,6 @@ class ForgotPasswordScreen extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                // Title
                 Text(
                   'Forgot Password?',
                   textAlign: TextAlign.center,
@@ -49,8 +48,6 @@ class ForgotPasswordScreen extends StatelessWidget {
                   ),
                 ),
                 SizedBox(height: 20),
-
-                // Description
                 Text(
                   'Enter your email address below to receive instructions for resetting your password.',
                   textAlign: TextAlign.center,
@@ -60,17 +57,25 @@ class ForgotPasswordScreen extends StatelessWidget {
                   ),
                 ),
                 SizedBox(height: 30),
-
-                // Email Input Field
                 _buildEmailTextField(),
-
                 SizedBox(height: 30),
-
-                // Submit Button
                 ElevatedButton(
-                  onPressed: () {
+                  onPressed: () async {
                     // Handle password reset logic here
-                    print('Reset password for: ${emailController.text}');
+                    String email = emailController.text.trim();
+                    if (email.isNotEmpty) {
+                      try {
+                        await _auth.sendPasswordResetEmail(email: email);
+                        Get.snackbar('Success', 'Password reset link sent!',
+                            snackPosition: SnackPosition.BOTTOM);
+                      } on FirebaseAuthException catch (e) {
+                        Get.snackbar('Error', e.message ?? 'An error occurred.',
+                            snackPosition: SnackPosition.BOTTOM);
+                      }
+                    } else {
+                      Get.snackbar('Error', 'Please enter an email address.',
+                          snackPosition: SnackPosition.BOTTOM);
+                    }
                   },
                   style: ElevatedButton.styleFrom(
                     padding: EdgeInsets.symmetric(vertical: 15),
@@ -87,11 +92,8 @@ class ForgotPasswordScreen extends StatelessWidget {
                     ),
                   ),
                 ),
-
                 SizedBox(height: 20),
-
                 // Back to Login
-              
               ],
             ),
           ),
@@ -100,7 +102,6 @@ class ForgotPasswordScreen extends StatelessWidget {
     );
   }
 
-  // Helper method to build the email input field
   Widget _buildEmailTextField() {
     return TextField(
       controller: emailController,

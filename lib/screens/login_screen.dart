@@ -22,7 +22,6 @@ class _LoginScreenState extends State<LoginScreen> {
       isLoading = true;
     });
     try {
-      // Authenticate the user
       UserCredential userCredential = await _auth.signInWithEmailAndPassword(
         email: emailController.text.trim(),
         password: passwordController.text.trim(),
@@ -31,12 +30,11 @@ class _LoginScreenState extends State<LoginScreen> {
       User? user = userCredential.user;
 
       if (user != null) {
-        // Fetch the user role from Firestore
         DocumentSnapshot userDoc =
         await _firestore.collection('users').doc(user.uid).get();
 
         if (userDoc.exists) {
-          String role = userDoc['role']; // Assuming role is stored as 'role'
+          String role = userDoc['role'];
           navigateBasedOnRole(role);
         } else {
           Get.snackbar('Error', 'User data not found!');
@@ -84,10 +82,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 SizedBox(height: 30),
                 Text(
                   'Login',
-                  style: TextStyle(
-                      fontSize: 32,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white),
+                  style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: Colors.white),
                 ),
                 SizedBox(height: 20),
                 TextField(
@@ -119,38 +114,45 @@ class _LoginScreenState extends State<LoginScreen> {
                   style: TextStyle(color: Colors.white),
                 ),
                 SizedBox(height: 20),
-                isLoading
-                    ? CircularProgressIndicator()
-                    : ElevatedButton(
-                  onPressed: loginUser,
+                ElevatedButton(
+                  onPressed: () {
+                    Get.toNamed(AppRoutes.phoneInputScreen); // Navigate to PhoneInputScreen
+                  },
                   style: ElevatedButton.styleFrom(
-                    padding: EdgeInsets.symmetric(
-                        horizontal: 50, vertical: 15),
+                    padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
                     backgroundColor: Colors.blue.shade300,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
                     ),
                   ),
-                  child: Text('Login',
-                      style: TextStyle(
-                          fontSize: 18, color: Colors.white)),
+                  child: Text('Login with OTP', style: TextStyle(fontSize: 18, color: Colors.white)),
+                ),
+                SizedBox(height: 20),
+                isLoading
+                    ? CircularProgressIndicator()
+                    : ElevatedButton(
+                  onPressed: loginUser,
+                  style: ElevatedButton.styleFrom(
+                    padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+                    backgroundColor: Colors.blue.shade300,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                  child: Text('Login', style: TextStyle(fontSize: 18, color: Colors.white)),
                 ),
                 SizedBox(height: 20),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text("Don't have an account? ",
-                        style: TextStyle(color: Colors.white, fontSize: 16)),
+                    Text("Don't have an account? ", style: TextStyle(color: Colors.white, fontSize: 16)),
                     GestureDetector(
                       onTap: () {
                         Get.toNamed(AppRoutes.signupScreen);
                       },
                       child: Text(
                         "Signup",
-                        style: TextStyle(
-                            color: Colors.blue.shade200,
-                            fontSize: 16,
-                            decoration: TextDecoration.underline),
+                        style: TextStyle(color: Colors.blue.shade200, fontSize: 16, decoration: TextDecoration.underline),
                       ),
                     ),
                   ],
@@ -162,10 +164,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   },
                   child: Text(
                     "Forgot Password?",
-                    style: TextStyle(
-                        color: Colors.blue.shade200,
-                        fontSize: 16,
-                        decoration: TextDecoration.underline),
+                    style: TextStyle(color: Colors.blue.shade200, fontSize: 16, decoration: TextDecoration.underline),
                   ),
                 ),
               ],
