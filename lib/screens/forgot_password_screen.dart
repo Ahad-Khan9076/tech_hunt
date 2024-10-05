@@ -1,18 +1,20 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class ForgotPasswordScreen extends StatelessWidget {
   final TextEditingController emailController = TextEditingController();
   final FirebaseAuth _auth = FirebaseAuth.instance; // Initialize Firebase Auth
 
+  // Constructor to accept the email parameter
+  ForgotPasswordScreen({Key? key, String? email}) : super(key: key) {
+    if (email != null) {
+      emailController.text = email; // Pre-fill the email field if provided
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    // Check if an email was passed as an argument and set it to the emailController
-    if (Get.arguments != null) {
-      emailController.text = Get.arguments as String;
-    }
-
     return Scaffold(
       backgroundColor: Colors.transparent,
       appBar: AppBar(
@@ -66,7 +68,6 @@ class ForgotPasswordScreen extends StatelessWidget {
                 SizedBox(height: 30),
                 ElevatedButton(
                   onPressed: () async {
-                    // Handle password reset logic here
                     String email = emailController.text.trim();
                     if (email.isNotEmpty) {
                       try {
@@ -113,7 +114,6 @@ class ForgotPasswordScreen extends StatelessWidget {
                   ),
                 ),
                 SizedBox(height: 20),
-                // Back to Login can be added here if needed
               ],
             ),
           ),
@@ -128,20 +128,15 @@ class ForgotPasswordScreen extends StatelessWidget {
       decoration: InputDecoration(
         labelText: 'Email',
         labelStyle: TextStyle(color: Colors.white),
-        filled: true,
-        fillColor: Colors.blue.shade200.withOpacity(0.2),
-        prefixIcon: Icon(Icons.email, color: Colors.white),
         enabledBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: Colors.white54),
-          borderRadius: BorderRadius.circular(10.0),
-        ),
-        focusedBorder: OutlineInputBorder(
           borderSide: BorderSide(color: Colors.white),
-          borderRadius: BorderRadius.circular(10.0),
+          borderRadius: BorderRadius.circular(10),
         ),
+        filled: true,
+        fillColor: Colors.white10,
+        prefixIcon: Icon(Icons.email, color: Colors.white),
       ),
       style: TextStyle(color: Colors.white),
-      keyboardType: TextInputType.emailAddress,
     );
   }
 }

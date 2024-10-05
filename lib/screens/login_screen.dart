@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../routes/app_route.dart';
+import 'forgot_password_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -160,7 +161,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 SizedBox(height: 10),
                 GestureDetector(
                   onTap: () {
-                    Get.toNamed(AppRoutes.forgotPasswordScreen);
+                    Get.to(ForgotPasswordScreen(email: emailController.text.trim())); // Pass email to ForgotPasswordScreen
                   },
                   child: Text(
                     "Forgot Password?",
