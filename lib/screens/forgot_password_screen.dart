@@ -1,6 +1,6 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 
 class ForgotPasswordScreen extends StatelessWidget {
   final TextEditingController emailController = TextEditingController();
@@ -8,6 +8,11 @@ class ForgotPasswordScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Check if an email was passed as an argument and set it to the emailController
+    if (Get.arguments != null) {
+      emailController.text = Get.arguments as String;
+    }
+
     return Scaffold(
       backgroundColor: Colors.transparent,
       appBar: AppBar(
@@ -66,15 +71,30 @@ class ForgotPasswordScreen extends StatelessWidget {
                     if (email.isNotEmpty) {
                       try {
                         await _auth.sendPasswordResetEmail(email: email);
-                        Get.snackbar('Success', 'Password reset link sent!',
-                            snackPosition: SnackPosition.BOTTOM);
+                        Get.snackbar(
+                          'Success',
+                          'Password reset link sent!',
+                          snackPosition: SnackPosition.BOTTOM,
+                          colorText: Colors.white,
+                          backgroundColor: Colors.green,
+                        );
                       } on FirebaseAuthException catch (e) {
-                        Get.snackbar('Error', e.message ?? 'An error occurred.',
-                            snackPosition: SnackPosition.BOTTOM);
+                        Get.snackbar(
+                          'Error',
+                          e.message ?? 'An error occurred.',
+                          snackPosition: SnackPosition.BOTTOM,
+                          colorText: Colors.white,
+                          backgroundColor: Colors.red,
+                        );
                       }
                     } else {
-                      Get.snackbar('Error', 'Please enter an email address.',
-                          snackPosition: SnackPosition.BOTTOM);
+                      Get.snackbar(
+                        'Error',
+                        'Please enter an email address.',
+                        snackPosition: SnackPosition.BOTTOM,
+                        colorText: Colors.white,
+                        backgroundColor: Colors.red,
+                      );
                     }
                   },
                   style: ElevatedButton.styleFrom(
@@ -93,7 +113,7 @@ class ForgotPasswordScreen extends StatelessWidget {
                   ),
                 ),
                 SizedBox(height: 20),
-                // Back to Login
+                // Back to Login can be added here if needed
               ],
             ),
           ),
