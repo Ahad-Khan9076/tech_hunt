@@ -6,6 +6,8 @@ import '../routes/app_route.dart';
 import 'forgot_password_screen.dart';
 
 class LoginScreen extends StatefulWidget {
+  const LoginScreen({super.key});
+
   @override
   _LoginScreenState createState() => _LoginScreenState();
 }
@@ -79,74 +81,74 @@ class _LoginScreenState extends State<LoginScreen> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(Icons.person_pin, size: 100, color: Colors.white),
-                SizedBox(height: 30),
-                Text(
+                const Icon(Icons.person_pin, size: 100, color: Colors.white),
+                const SizedBox(height: 30),
+                const Text(
                   'Login',
                   style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: Colors.white),
                 ),
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
                 TextField(
                   controller: emailController,
                   decoration: InputDecoration(
                     labelText: 'Email',
-                    labelStyle: TextStyle(color: Colors.white),
+                    labelStyle: const TextStyle(color: Colors.white),
                     enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.white),
+                      borderSide: const BorderSide(color: Colors.white),
                       borderRadius: BorderRadius.circular(10.0),
                     ),
-                    prefixIcon: Icon(Icons.email, color: Colors.white),
+                    prefixIcon: const Icon(Icons.email, color: Colors.white),
                   ),
-                  style: TextStyle(color: Colors.white),
+                  style: const TextStyle(color: Colors.white),
                 ),
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
                 TextField(
                   controller: passwordController,
                   obscureText: true,
                   decoration: InputDecoration(
                     labelText: 'Password',
-                    labelStyle: TextStyle(color: Colors.white),
+                    labelStyle: const TextStyle(color: Colors.white),
                     enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.white),
+                      borderSide: const BorderSide(color: Colors.white),
                       borderRadius: BorderRadius.circular(10.0),
                     ),
-                    prefixIcon: Icon(Icons.lock, color: Colors.white),
+                    prefixIcon: const Icon(Icons.lock, color: Colors.white),
                   ),
-                  style: TextStyle(color: Colors.white),
+                  style: const TextStyle(color: Colors.white),
                 ),
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
                 ElevatedButton(
                   onPressed: () {
                     Get.toNamed(AppRoutes.phoneInputScreen); // Navigate to PhoneInputScreen
                   },
                   style: ElevatedButton.styleFrom(
-                    padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+                    padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
                     backgroundColor: Colors.blue.shade300,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
                     ),
                   ),
-                  child: Text('Login with OTP', style: TextStyle(fontSize: 18, color: Colors.white)),
+                  child: const Text('Login with OTP', style: TextStyle(fontSize: 18, color: Colors.white)),
                 ),
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
                 isLoading
-                    ? CircularProgressIndicator()
+                    ? const CircularProgressIndicator()
                     : ElevatedButton(
                   onPressed: loginUser,
                   style: ElevatedButton.styleFrom(
-                    padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+                    padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
                     backgroundColor: Colors.blue.shade300,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
                     ),
                   ),
-                  child: Text('Login', style: TextStyle(fontSize: 18, color: Colors.white)),
+                  child: const Text('Login', style: TextStyle(fontSize: 18, color: Colors.white)),
                 ),
                 SizedBox(height: 20),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text("Don't have an account? ", style: TextStyle(color: Colors.white, fontSize: 16)),
+                    const Text("Don't have an account? ", style: TextStyle(color: Colors.white, fontSize: 16)),
                     GestureDetector(
                       onTap: () {
                         Get.toNamed(AppRoutes.signupScreen);
